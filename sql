@@ -21,7 +21,7 @@ INSERT INTO task_status set status_name='FINISHED';
 INSERT INTO task_status set status_name='WAITING';
 INSERT INTO task_status set status_name='ERROR';
 
-SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) limit 0,10;
+	SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) order by task_id desc limit 0,10;
 
 INSERT INTO task (task_name, task_status_id, task_time_start, task_time_finish, task_length) values ('task1', 2, now(), now(), 1);
 

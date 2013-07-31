@@ -32,9 +32,9 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	}
 	
 	@Override
-	public List<TaskDTO> getTasks(int count, int pageNum) {		//Gotta change the SQL-query so that it get's the status_name from status table
+	public List<TaskDTO> getTasks(int count, int pageNum) {
 		pageNum *= count;
-		String query = "SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) limit ?,?";
+		String query = "SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) order by task_id desc limit ?,?";
 		List<TaskDTO> tasks = getJdbcTemplate().query(query,
 				new RowMapper<TaskDTO>() {
 
@@ -58,12 +58,12 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 			public PreparedStatement createPreparedStatement(Connection connection)
 					throws SQLException {
 				PreparedStatement ps = connection.prepareStatement(query, new String[]{"id"});
-				ps.setInt(4, length);
 				ps.setString(1, name);
+				ps.setInt(2, length);
 				return ps;
 			}
 		}, keyHolder);
-		return 0;
+		return keyHolder.getKey().intValue();
 	}
 
 	@Override

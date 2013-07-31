@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import taskexecutor.model.dao.ITaskManager;
+import taskexecutor.model.dto.TaskDTO;
 import taskexecutor.model.mongo.domain.TaskEntity;
 import taskexecutor.model.mongo.repositories.TaskRepository;
 
@@ -54,6 +55,24 @@ public class JobIdController {
 		//return "ololo";
 		return gson.toJson(resp);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/tasks/get_task_list.form")
+	public String getTaskList(@RequestParam("page") int page) {
+		List<TaskDTO> tasks = taskManager.getTasks(10, page);
+		Gson gson = new Gson();
+		return gson.toJson(tasks);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/tasks/new_task.form")
+	public String newTask(@RequestParam("name") String name, @RequestParam("length") Integer length) {
+		int id = taskManager.createTask(name, length);
+		JsonObject json = new JsonObject();
+		json.addProperty("newId", id);
+		return json.toString();
+	}
+	
 	
 	@ResponseBody
 	@RequestMapping(value="/jobs/create.form")
