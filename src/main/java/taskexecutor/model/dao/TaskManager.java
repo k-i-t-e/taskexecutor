@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowCountCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -18,7 +20,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import taskexecutor.model.dto.TaskDTO;
 
 public class TaskManager extends JdbcDaoSupport implements ITaskManager {
-
+	
+	public int numRows;
+	
 	private TaskDTO makeTaskDTO(ResultSet rs) throws SQLException {
 		TaskDTO task = new TaskDTO(rs.getInt("task_id"),
 				rs.getString("task_name"), 
@@ -45,6 +49,8 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 					}
 
 				}, pageNum, count);
+		RowCountCallbackHandler countCallback = new RowCountCallbackHandler();
+		numRows = countCallback.getRowCount();
 		return tasks;
 	}
 
@@ -117,6 +123,13 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 			}
 			
 		});
+		RowCountCallbackHandler countCallback = new RowCountCallbackHandler();
+		numRows = countCallback.getRowCount();
 		return tasks;
+	}
+
+	@Override
+	public int getNumRows() {
+		return numRows;
 	}
 }

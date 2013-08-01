@@ -36,3 +36,13 @@ body {
 input.tip {
 	color: rgba(0,0,0, 0.3);
 }
+
+.pagination ul > li > a,
+.pagination ul > li > span {
+	cursor:pointer;
+}
+
+.pagination-small ul > li > a,
+.pagination-small ul > li > span {
+  padding: 2px 5px;
+}

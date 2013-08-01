@@ -15,7 +15,7 @@
 		<!-- Web -->
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
-		<servlet.version>2.5</servlet.version>
+		<servlet.version>3.0.1</servlet.version>
 		
 
 		<!-- Spring -->
@@ -59,6 +59,8 @@
      		 <artifactId>mongo-java-driver</artifactId>
       		<version>2.7.2</version>
 		</dependency>
+		
+		
 		
 		<!-- MySQL JDBC Driver -->
 		<dependency>
@@ -107,7 +109,7 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
 			<version>${servlet.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -183,6 +185,12 @@
 	      <version>2.2.4</version>
 	      <scope>compile</scope>
 	    </dependency>
-	
+		
+		<!-- <dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-extras</artifactId>
+			<version>2.2.2</version>
+		</dependency> -->
+		
 	</dependencies>	
 </project>

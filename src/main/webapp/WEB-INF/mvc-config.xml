@@ -14,8 +14,10 @@
 
 	<context:component-scan
             base-package="taskexecutor"/>
-    <mvc:annotation-driven />
-
+    <mvc:annotation-driven>
+    	<mvc:async-support default-timeout="30000" task-executor="taskExecutor"></mvc:async-support>
+    </mvc:annotation-driven>
+    
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 	        <!-- Example: a logical view name of 'showMessage' is mapped to '/WEB-INF/jsp/showMessage.jsp' -->
 	        <property name="prefix" value="/WEB-INF/view/"/>
@@ -25,6 +27,9 @@
 	<bean id="jobIdController" class="taskexecutor.JobIdController" scope="request">
 		<property name="taskManager">
 			<ref bean="taskManager"/>
+		</property>
+		<property name="taskExecutor">
+			<ref bean="taskExecutor"/>
 		</property>
 	</bean>
 </beans>
