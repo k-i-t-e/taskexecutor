@@ -50,6 +50,8 @@
 		</property>
 	</bean>
 	
+	<bean id="taskPool" class="taskexecutor.TaskPool"></bean>
+	
 	<!-- <jpa:repositories base-package="taskexecutor.repos"/> -->
 	<mongo:db-factory dbname="task_base"/>
 	<mongo:repositories base-package="taskexecutor.model.mongo.repositories"></mongo:repositories>

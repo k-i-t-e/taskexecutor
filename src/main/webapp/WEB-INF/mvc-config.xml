@@ -24,12 +24,15 @@
 	        <property name="suffix" value=".jsp"/>
 	</bean>
 	
-	<bean id="jobIdController" class="taskexecutor.JobIdController" scope="request">
+	<bean id="taskExecutionController" class="taskexecutor.controller.TaskExecutionController" scope="request">
 		<property name="taskManager">
 			<ref bean="taskManager"/>
 		</property>
 		<property name="taskExecutor">
 			<ref bean="taskExecutor"/>
+		</property>
+		<property name="taskPool">
+			<ref bean="taskPool"/>
 		</property>
 	</bean>
 </beans>

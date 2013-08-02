@@ -1,20 +1,24 @@
-package taskexecutor;
+package taskexecutor.controller;
 
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import javax.servlet.ServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import taskexecutor.ComputeTask;
+import taskexecutor.TaskPool;
 import taskexecutor.model.dao.ITaskManager;
 import taskexecutor.model.dao.TaskManager;
 import taskexecutor.model.dto.TaskDTO;
@@ -25,9 +29,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 @Controller
-public class JobIdController {
+public class TaskExecutionController {
 	
 	private TaskExecutor taskExecutor;
+	private TaskPool taskPool;
 	private ITaskManager taskManager;
 	@Autowired
 	private TaskRepository taskRepo;
@@ -37,46 +42,15 @@ public class JobIdController {
 		this.taskExecutor = taskExecutor;
 	}
 	
+	public void setTaskPool(TaskPool taskPool) {
+		this.taskPool = taskPool;
+	}
+	
 	@Required
 	public void setTaskManager(ITaskManager taskManager) {
 		this.taskManager = taskManager;
 	}
 	
-	class MyResponse{
-		private String text;
-		private List tasks;
-		 public MyResponse(String text, List tasks) {
-			 this.text= text;
-			 this.tasks = tasks;
-		}
-	}
-	
-	private class IdleTask implements Runnable {
-
-	    private String message;
-	    private ITaskManager taskManager;
-	    public IdleTask(ITaskManager taskManager, String message) {
-	      this.message = message;
-	      this.taskManager = taskManager;
-	    }
-
-	    public void run() {
-	    	System.out.println(message);
-	    	taskManager.updateTask(4, 2);
-	    }
-
-	  }
-	
-	
-	@ResponseBody
-	@RequestMapping(value="/jobs/jobid.form", method=RequestMethod.POST)
-	public String jobIdHandler(@RequestParam("jobId") int jobId) {
-		List tasks = taskManager.getTasks(10, 0);
-		MyResponse resp = new MyResponse("Got" + jobId, tasks);	
-		Gson gson = new Gson();
-		gson.toJson(resp);
-		return gson.toJson(resp);
-	}
 	
 	@ResponseBody
 	@RequestMapping(value="/tasks/get_task_list.form")
@@ -85,8 +59,8 @@ public class JobIdController {
 		JsonObject json = new JsonObject();
 		Gson gson = new Gson();
 		json.add("tasks", gson.toJsonTree(tasks));
-		json.addProperty("pageCount", taskManager.getNumRows());
-		//taskExecutor.execute(new IdleTask(this.taskManager, "ololo"));
+		json.addProperty("pageCount", taskManager.getNumRows()/10);
+		json.addProperty("pageNum", page);
 		return json.toString();
 	}
 	
@@ -108,27 +82,32 @@ public class JobIdController {
 	@ResponseBody
 	@RequestMapping(value="/tasks/new_task.form")
 	public String newTask(@RequestParam("name") String name, @RequestParam("length") Integer length) {
-		int id = taskManager.createTask(name, length);
-		taskExecutor.execute(new ComputeTask(taskManager, id, length));
+		
+		int id = taskManager.createTask(name, length);	// save to MySQL using JDBC
+		
+		TaskEntity taskEntity = new TaskEntity();		// save to MongoDB using Data
+		taskEntity.setName(name);
+		taskEntity.setStatus("RUNNING");
+		taskEntity.setFinishDate(null);
+		taskEntity.setLength(length);
+		taskRepo.save(taskEntity);
+		
+		//taskExecutor.execute(new ComputeTask(taskManager, id, length));
+		FutureTask<Integer> task = new FutureTask<Integer>(new ComputeTask(taskManager, id, length), null);
+		taskPool.add(id, task);
+		taskExecutor.execute(task);
+		//taskPool.get(id).cancel(true);
+		//task.cancel(true);
 		JsonObject json = new JsonObject();
 		json.addProperty("newId", id);
 		return json.toString();
 	}
 	
-	
 	@ResponseBody
-	@RequestMapping(value="/jobs/create.form")
-	public String taskCreate(@RequestParam("jobId") String taskName) {
-		TaskEntity task = new TaskEntity();
-		task.setName(taskName);
-		task.setStatus("RUNNING");
-		task.setFinishDate(new Date());
-		task.setLength(1);
-		taskRepo.save(task);
-		JsonObject json = new JsonObject();
-		json.addProperty("text", taskName);	
-		return json.toString();
+	@RequestMapping(value="/tasks/cancel_task.form")
+	public void cancelTask(@RequestParam("id") Integer id) {
+		FutureTask<Integer> task = taskPool.get(id);
+		if (task.cancel(true))
+			taskManager.updateTask(id, 5);
 	}
-
-	
 }

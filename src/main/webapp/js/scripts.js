@@ -1,22 +1,42 @@
-var newTaskNameChanged = false;
-var newTaskLengthChanged = false;
+//var newTaskNameChanged = false;
+//var newTaskLengthChanged = false;
+
+
+function setFieldHandlers(field) {
+	var $field = $(field);
+	$field.on('click', function() {
+		$this = $(this);
+		if (!$this.data('changed')) {
+			$this.val('');
+			$this.data('changed', 1);
+		}
+	}).on('blur', function() {
+		$this = $(this);
+		if ($this.val() == '') {
+			$this.val($(this).data('init'));
+			$this.data('changed', 0);
+		}
+	});
+}
 
 $(function() {
-	$('#new_task_name').val('Enter new task name here...');
-	$('#new_task_length').val('and length');
-	$('#new_task_name').on('click', function() {
-		if (!newTaskNameChanged) {
+	var $name = $('#new_task_name');
+	var $length = $('#new_task_length');
+	$name.val($name.data('init'));
+	$length.val($length.data('init'));
+	/*$name.on('click', function() {
+		if (!$(this).data('changed')) {
 			$(this).val('');
-			newTaskNameChanged = true;
+			$(this).data('changed', 1);
 		}
 	}).on('blur', function() {
 		if ($(this).val() == '') {
-			$(this).val('Enter new task name here...');
-			newTaskNameChanged = false;
+			$(this).val($(this).data('init'));
+			$(this).data('changed', 0);
 		}
 	});
 	
-	$('#new_task_length').on('click', function() {
+	$length.on('click', function() {
 		if (!newTaskLengthChanged) {
 			$(this).val('');
 			newTaskLengthChanged = true;
@@ -26,5 +46,8 @@ $(function() {
 			$(this).val('and length');
 			newTaskLengthChanged = false;
 		}
-	});
+	});*/
+	
+	setFieldHandlers('#new_task_name');
+	setFieldHandlers('#new_task_length');
 });

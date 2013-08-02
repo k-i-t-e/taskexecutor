@@ -23,6 +23,8 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	
 	public int numRows;
 	
+	private boolean firstTime = true;
+	
 	private TaskDTO makeTaskDTO(ResultSet rs) throws SQLException {
 		TaskDTO task = new TaskDTO(rs.getInt("task_id"),
 				rs.getString("task_name"), 
@@ -49,8 +51,10 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 					}
 
 				}, pageNum, count);
-		RowCountCallbackHandler countCallback = new RowCountCallbackHandler();
-		numRows = countCallback.getRowCount();
+		//RowCountCallbackHandler countCallback = new RowCountCallbackHandler();
+		//numRows = countCallback.getRowCount();
+		if (firstTime)
+			numRows = getJdbcTemplate().queryForObject("SELECT count(*) FROM task", Integer.class);
 		return tasks;
 	}
 
@@ -69,6 +73,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 				return ps;
 			}
 		}, keyHolder);
+		numRows++;
 		return keyHolder.getKey().intValue();
 	}
 
