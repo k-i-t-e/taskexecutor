@@ -208,7 +208,7 @@ TaskManager.prototype.pageHandler = function(element) {			// Sends the request t
 TaskManager.prototype.setFieldHandlers = function(fieldId) {		// Sets decorative handlers for fields to clear their default values
 	var $field = $('#'+fieldId);
 	$field.val($field.data('init'));
-	$field.on('click', function() {
+	$field.on('focus', function() {
 		$this = $(this);
 		if (!$this.data('changed')) {
 			$this.val('');

@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,50 +82,7 @@
 					</tr>
 				</thead>
 				<tbody id="tbody">
-					<tr class="success">
-						<td>1</td>
-						<td>Task1</td>
-						<td>1</td>
-						<td>2013-07-29 15:22:10</td>
-						<td>2013-07-29 16:22:10</td>
-						<td>FINISHED</td>
-						<td>
-							<button class="btn" type="button">Button</button>
-						</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>Task2</td>
-						<td>5</td>
-						<td>2013-07-29 18:21:54</td>
-						<td></td>
-						<td>RUNNING</td>
-						<td>
-							<button class="btn" type="button">Button</button>
-						</td>
-					</tr>
-					<tr class="error">
-						<td>3</td>
-						<td>Task3</td>
-						<td>4</td>
-						<td>2013-07-29 21:27:14</td>
-						<td></td>
-						<td>ERROR</td>
-						<td>
-							<button class="btn" type="button">Button</button>
-						</td>
-					</tr>
-					<tr class="warning">
-						<td>3</td>
-						<td>Task3</td>
-						<td>2</td>
-						<td>2013-07-29 14:17:19</td>
-						<td></td>
-						<td>WAITING</td>
-						<td>
-							<button class="btn" type="button">Button</button>
-						</td>
-					</tr>
+					${tasksTable}
 				</tbody>
 			</table>
 			<div class="pagination pagination-right pagination-small custom-pagination">

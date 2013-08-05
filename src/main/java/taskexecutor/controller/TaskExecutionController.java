@@ -93,11 +93,12 @@ public class TaskExecutionController {
 		taskRepo.save(taskEntity);
 		
 		//taskExecutor.execute(new ComputeTask(taskManager, id, length));
-		FutureTask<Integer> task = new FutureTask<Integer>(new ComputeTask(taskManager, id, length), null);
+		FutureTask<Integer> task = new FutureTask<Integer>(new ComputeTask(taskManager, id, length, taskEntity, taskRepo), null);
 		taskPool.add(id, task);
 		taskExecutor.execute(task);
 		//taskPool.get(id).cancel(true);
 		//task.cancel(true);
+		
 		JsonObject json = new JsonObject();
 		json.addProperty("newId", id);
 		return json.toString();

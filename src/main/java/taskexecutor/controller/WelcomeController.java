@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import taskexecutor.model.dao.ITaskManager;
 import taskexecutor.model.dto.TaskDTO;
 
-//@Controller
+@Controller
 public class WelcomeController {
 	
 	private ITaskManager taskManager;
@@ -20,27 +21,40 @@ public class WelcomeController {
 		this.taskManager = taskManager;
 	}
 	
-	
-	public String handleWelcomPage(Model model) {
+	@RequestMapping(value="/")
+	public String handleWelcomPage(Model model) {	// I'm sure there is more efficient way...
 		
 		List<TaskDTO> tasks = taskManager.getTasks(10, 0);
 		StringBuilder resultHtml = new StringBuilder();
 		for (TaskDTO task: tasks) {
 			if (task.getStatus() == "RUNNING") 
-				resultHtml.append("<tr>");
+				resultHtml.append("<tr class='info'>");
 			else
-				if (task.getStatus() == "DONE")
+				if (task.getStatus() == "FINISHED")
 					resultHtml.append("<tr class='success'>");
 				else
-					if (task.getStatus() == "ERROR")
+					if (task.getStatus() == "CANCELED")
 						resultHtml.append("<tr class='error'>");
 					else
 						if (task.getStatus() == "WAITING")
 							resultHtml.append("<tr class='warning'>");
 			
-			resultHtml.append("td").append(task.getId()).append("/td");
+			resultHtml.append("<td>").append(task.getId()).append("</td>");
+			resultHtml.append("<td>").append(task.getName()).append("</td>");
+			resultHtml.append("<td>").append(task.getLength()).append("</td>");
+			resultHtml.append("<td>").append(task.getDateStart()).append("</td>");
+			resultHtml.append("<td>").append(task.getDateFinish()).append("</td>");
+			resultHtml.append("<td>").append(task.getStatus()).append("</td>");
+			if (task.getStatus() == "RUNNING" || task.getStatus() == "WAITING" || task.getStatus() == "ERROR")
+				resultHtml.append("<td><button data-id='"+task.getId()+"' class='btn' type='button'>Cancel</button></td>");
+			else
+				resultHtml.append("<td>");
+			
+			resultHtml.append("</tr>");
 		}
-		return null;
 		
+		model.addAttribute("tasksTable", resultHtml);
+		//return "main";
+		return "taskexecutor.index";
 	}
 }

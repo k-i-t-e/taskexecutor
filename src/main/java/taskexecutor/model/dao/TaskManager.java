@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCountCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,6 +15,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import taskexecutor.model.dto.TaskDTO;
 
@@ -38,6 +39,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	}
 	
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public List<TaskDTO> getTasks(int count, int pageNum) {
 		pageNum *= count;
 		String query = "SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) order by task_id desc limit ?,?";
@@ -59,6 +61,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	}
 
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
 	public int createTask(final String name, final Integer length) {	// Should return an id of recently created task
 		final String query = "INSERT INTO task (task_name, task_status_id, task_time_start, task_length) values (?, 1, now(), ?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -78,6 +81,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	}
 
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
 	public void updateTask(int id, int statusId) {
 		String query;
 		if (statusId == 2)	// If setting status to FINISHED
@@ -89,6 +93,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 
 	
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public List<TaskDTO> getTasksByName(String name, int count, int pageNum) {
 		pageNum *= count;
 		String query = "SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) where task_name=?% limit ?,?";
@@ -105,6 +110,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	}
 
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public List<TaskDTO> getTasksByMap(Map<String, Object> paramMap, int count, int pageNum) {	// This one needs to be tested... for sure!))
 		pageNum *= count;
 		String query = "SELECT task_id, task_name, status_name, task_time_start, task_time_finish, task_length from (task join task_status on task_status_id=status_id) where ";
@@ -134,6 +140,7 @@ public class TaskManager extends JdbcDaoSupport implements ITaskManager {
 	}
 
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public int getNumRows() {
 		return numRows;
 	}
