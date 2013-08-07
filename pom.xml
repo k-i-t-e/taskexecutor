@@ -95,11 +95,17 @@
 		</dependency>
 		
 		<!--  Spring Data JPA -->
-<!-- 	<dependency>
+		<dependency>
  			<groupId>org.springframework.data</groupId>
  			<artifactId>spring-data-jpa</artifactId>
  			<version>${spring-data-jpa.version}</version>
-	</dependency>  -->
+ 			<exclusions>
+ 				<exclusion>
+ 					<groupId>org.springframework.data</groupId>
+ 					<artifactId>spring-data-commons</artifactId>
+ 				</exclusion>
+ 			</exclusions>
+		</dependency> 
 		
 		
 		<!-- Other Web dependencies -->
@@ -157,11 +163,11 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>1.0.1.Final</version>
-        </dependency> -->
+        </dependency>
 		
 		
 		<!-- Test Artifacts -->

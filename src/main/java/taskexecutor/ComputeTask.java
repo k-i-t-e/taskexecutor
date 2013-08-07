@@ -37,8 +37,6 @@ public class ComputeTask implements Runnable {
 		}
 		taskManager.updateTask(taskId, 2); // finished
 		
-		//TaskEntity task = taskRepo.findByName(taskName);
-		//System.out.println("Name="+task.getName());
 		task.setStatus("FINISHED");
 		task.setFinishDate(new Date());
 		taskRepo.save(task);
