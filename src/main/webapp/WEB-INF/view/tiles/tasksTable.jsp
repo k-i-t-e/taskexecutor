@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="row">
 				<div class="span6">
 					<form class="form-search">
@@ -33,7 +33,41 @@
 					</tr>
 				</thead>
 				<tbody id="tbody">
-					${tasksTable}
+					<c:forEach items="${tasks}" var="task">
+						<c:choose>
+							<c:when test="${task.getStatus() == 'RUNNING'}">
+								<tr class="info">
+							</c:when>
+							<c:when test="${task.getStatus() == 'FINISHED'}">
+								<tr class="success">
+							</c:when>
+							<c:when test="${task.getStatus() == 'CANCELED'}">
+								<tr class="error">
+							</c:when>
+							<c:when test="${task.getStatus() == 'WAITING'}">
+								<tr class="warning">
+							</c:when>
+							<c:otherwise>
+								<tr>
+							</c:otherwise>
+						</c:choose>
+						<td>${task.getId()}</td>
+						<td>${task.getName()}</td>
+						<td>${task.getLength()}</td>
+						<td>${task.getDateStart()}</td>
+						<td>${task.getDateFinish()}</td>
+						<td>${task.getStatus()}</td>
+						<c:choose>
+							<c:when test="${task.getStatus() == 'RUNNING' || task.getStatus() == 'WAITING' || task.getStatus() == 'ERROR'}">
+								<td><button data-id="${task.getId()}" class='btn' type='button'>Cancel</button></td>
+							</c:when>
+							<c:otherwise>
+								<td></td>
+							</c:otherwise>
+						</c:choose>
+						</tr>
+					</c:forEach>
+					 <%-- ${tasksTable} --%>
 				</tbody>
 			</table>
 			<div class="pagination pagination-right pagination-small custom-pagination">

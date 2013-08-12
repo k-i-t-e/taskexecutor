@@ -27,16 +27,16 @@ public class WelcomeController {
 		List<TaskDTO> tasks = taskManager.getTasks(10, 0);
 		StringBuilder resultHtml = new StringBuilder();
 		for (TaskDTO task: tasks) {
-			if (task.getStatus() == "RUNNING") 
+			if (task.getStatus().equals("RUNNING")) 
 				resultHtml.append("<tr class='info'>");
 			else
-				if (task.getStatus() == "FINISHED")
+				if (task.getStatus().equals("FINISHED"))
 					resultHtml.append("<tr class='success'>");
 				else
-					if (task.getStatus() == "CANCELED")
+					if (task.getStatus().equals("CANCELED"))
 						resultHtml.append("<tr class='error'>");
 					else
-						if (task.getStatus() == "WAITING")
+						if (task.getStatus().equals("WAITING"))
 							resultHtml.append("<tr class='warning'>");
 			
 			resultHtml.append("<td>").append(task.getId()).append("</td>");
@@ -48,12 +48,13 @@ public class WelcomeController {
 			if (task.getStatus() == "RUNNING" || task.getStatus() == "WAITING" || task.getStatus() == "ERROR")
 				resultHtml.append("<td><button data-id='"+task.getId()+"' class='btn' type='button'>Cancel</button></td>");
 			else
-				resultHtml.append("<td>");
+				resultHtml.append("<td></td>");
 			
 			resultHtml.append("</tr>");
 		}
 		
-		model.addAttribute("tasksTable", resultHtml);
+		//model.addAttribute("tasksTable", resultHtml);
+		model.addAttribute("tasks", tasks);
 		//return "main";
 		return "taskexecutor.index";
 	}
